@@ -30,6 +30,13 @@ body {
     gap: 16px;
 }
 
+@media (max-width: 767px) {
+    .photos {
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+    }
+}
+
+
 .photo {
     position: relative;
     overflow: hidden;
@@ -37,12 +44,12 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.photo0 {
+.photo:first-child {
   grid-column-end: span 2;
   grid-row-end: span 2;
 }
 
-.photo img {
+.photo img, .photo video {
     width: 100%;
     height: 100%;
     object-fit: cover;
