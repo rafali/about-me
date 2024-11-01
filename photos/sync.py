@@ -1,26 +1,46 @@
 import json
+import requests
 
-with open('raw_insta.json', 'r') as file:
-    raw_insta = json.load(file)
+with open('insta_token.json', 'r') as file:
+    insta_token = json.load(file)
 
-with open('old_insta.json', 'r') as file:
-    old_insta = json.load(file)
+with open('insta.json', 'r') as file:
+    insta = json.load(file)
 
-old_insta_map = {}
+insta_map = {}
+results = []
+
+for item in insta:
+    insta_map[item['id']] = item
 
 
-for item in old_insta['data']:
-    print(item['id'])
-    old_insta_map[item['id']] = item
+def fetch():
+    token = insta_token.get("token")
+    fields = 'id,caption,location_id,media_type,media_url,permalink,thumbnail_url,timestamp,children{media_type,media_url,thumbnail_url}'
+    after = None
+    while True:
+        url = f'https://graph.instagram.com/v19.0/17841400379500478/media?fields={fields}&access_token={token}&limit=25'
+        if after:
+            url = url + '&after={0}'.format(after)
+        resp = requests.get(url)
+        j = resp.json()
+        print(j)
+        if j['data']:
+            for item in j['data']:
+                if item['id'] not in insta_map:
+                    print(f"appending item: {item.get('caption')}")
+                    results.append(item)
+                else:
+                    print(f"already stored: {item.get('caption')}")
+                    return
+            after = j['paging']['cursors']['after']
 
-for item in raw_insta:
-    print(item['id'])
-    old_item = old_insta_map.get(item['id'])
-    if old_item is not None:
-        location_url = old_item.get('location_url')
-        if location_url is not None:
-            item['location_url'] = location_url
-            print(item)
+
+fetch()
+
+for old_item in insta:
+    if old_item not in results:
+        results.append(old_item)
 
 with open('insta.json', 'w') as file:
-    json.dump(raw_insta, file, indent=4)
+    json.dump(results, file, indent=4)
