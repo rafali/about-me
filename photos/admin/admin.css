@@ -661,11 +661,12 @@ button:disabled {
     .post-list {
         flex: 1;
         max-height: none;
+        overflow-y: auto;
     }
 
     .sidebar.has-selection .post-list {
+        flex: 0 0 30vh;
         max-height: 30vh;
-        flex: 0;
     }
 
     .geo-grid {
