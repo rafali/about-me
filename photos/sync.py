@@ -93,6 +93,7 @@ def sync_instagram():
                             results.append(old_item)
                     with open(INSTA_FILE, 'w') as file:
                         json.dump(results, file, indent=4)
+                        file.write("\n")
                     return new_count
 
             paging = j.get('paging', {})
