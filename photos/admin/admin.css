@@ -608,6 +608,12 @@ button:disabled {
     background: #f9faf7;
 }
 
+.btn-confirm:disabled {
+    background: #c7cdbf;
+    cursor: not-allowed;
+    border-color: #c7cdbf;
+}
+
 @media (max-width: 920px) {
     .workspace {
         grid-template-columns: 1fr;

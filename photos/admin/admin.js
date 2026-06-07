@@ -625,10 +625,18 @@ async function openPublishModal() {
     try {
         publishButton.disabled = true;
         const response = await api('/api/git-status');
-        gitStatus.textContent = response.status || 'No changes';
+        const status = response.status || 'No changes';
+        gitStatus.textContent = status;
         commitMessage.value = '';
+
+        // Disable commit button if no changes
+        const hasChanges = !status.includes('No changes');
+        confirmPublish.disabled = !hasChanges;
+
         publishModal.hidden = false;
-        commitMessage.focus();
+        if (hasChanges) {
+            commitMessage.focus();
+        }
     } catch (error) {
         alert('Failed to fetch git status: ' + error.message);
     } finally {
