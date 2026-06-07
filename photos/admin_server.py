@@ -38,18 +38,49 @@ def save_insta(items):
 
 def get_git_status():
     try:
-        result = subprocess.run(
+        # Get summary of changes
+        status_result = subprocess.run(
             ['git', 'status', '--porcelain'],
             cwd=PROJECT_ROOT,
             capture_output=True,
             text=True,
             timeout=5,
         )
-        if result.returncode != 0:
-            return f"Error: {result.stderr}"
-        if not result.stdout.strip():
+        if status_result.returncode != 0:
+            return f"Error: {status_result.stderr}"
+        if not status_result.stdout.strip():
             return "No changes"
-        return result.stdout
+
+        # Get detailed diff
+        diff_result = subprocess.run(
+            ['git', 'diff', '--color=never'],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+        # Get diff for staged changes
+        staged_result = subprocess.run(
+            ['git', 'diff', '--cached', '--color=never'],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+
+        summary = status_result.stdout
+        diff_content = diff_result.stdout if diff_result.returncode == 0 else ""
+        staged_content = staged_result.stdout if staged_result.returncode == 0 else ""
+
+        # Combine summary and diff
+        full_diff = "=== CHANGES ===\n\n" + summary
+        if staged_content:
+            full_diff += "\n=== STAGED ===\n" + staged_content[:2000]  # Limit to 2000 chars
+        if diff_content:
+            full_diff += "\n=== UNSTAGED ===\n" + diff_content[:2000]  # Limit to 2000 chars
+
+        return full_diff
     except Exception as e:
         return f"Error: {str(e)}"
 

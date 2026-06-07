@@ -534,17 +534,19 @@ button:disabled {
 }
 
 .git-status {
-    background: #f9faf7;
+    background: #1e1e1e;
     border: 1px solid #d8dcd2;
     border-radius: 6px;
     padding: 12px;
     margin-bottom: 16px;
-    font-family: monospace;
-    font-size: 12px;
-    max-height: 200px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    max-height: 300px;
     overflow-y: auto;
     white-space: pre-wrap;
     word-break: break-word;
+    color: #e0e0e0;
+    line-height: 1.4;
 }
 
 .commit-form {
