@@ -1,8 +1,33 @@
-const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '::1']);
+function isAllowedHost() {
+    const hostname = location.hostname;
+    const allowedHosts = new Set(['localhost', '127.0.0.1', '::1']);
+    if (allowedHosts.has(hostname)) return true;
 
-if (!LOCAL_HOSTS.has(location.hostname)) {
-    document.body.textContent = 'Local admin only';
-    throw new Error('Local admin only');
+    // Allow .local domains (mDNS)
+    if (hostname.endsWith('.local')) return true;
+
+    // Allow single-label hostnames (like 'n5', 'nas', etc - local network names)
+    if (!hostname.includes('.')) return true;
+
+    // Check for IPv4 addresses in private ranges or Tailscale
+    const ipMatch = hostname.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+    if (ipMatch) {
+        const [, a, b] = ipMatch.map(Number);
+        // Localhost: 127.x.x.x
+        if (a === 127) return true;
+        // Private: 10.x.x.x, 192.168.x.x, 172.16-31.x.x
+        if (a === 10) return true;
+        if (a === 192 && b === 168) return true;
+        if (a === 172 && b >= 16 && b <= 31) return true;
+        // Tailscale: 100.x.x.x
+        if (a === 100) return true;
+    }
+    return false;
+}
+
+if (!isAllowedHost()) {
+    document.body.textContent = 'Admin access only from localhost, local network, or Tailscale';
+    throw new Error('Admin access restricted');
 }
 
 const state = {
@@ -24,6 +49,13 @@ const postLink = document.getElementById('postLink');
 const postCaption = document.getElementById('postCaption');
 const saveCaption = document.getElementById('saveCaption');
 const previewButton = document.getElementById('previewButton');
+const publishButton = document.getElementById('publishButton');
+const publishModal = document.getElementById('publishModal');
+const gitStatus = document.getElementById('gitStatus');
+const commitMessage = document.getElementById('commitMessage');
+const closePublish = document.getElementById('closePublish');
+const cancelPublish = document.getElementById('cancelPublish');
+const confirmPublish = document.getElementById('confirmPublish');
 const mediaMain = document.getElementById('mediaMain');
 const mediaPreview = document.getElementById('mediaPreview');
 const mapPreview = document.getElementById('mapPreview');
@@ -491,6 +523,57 @@ saveAndGenerate.addEventListener('click', () => action('Saving + generating', ()
     `/api/posts/${state.selectedId}/save-and-generate`,
     {method: 'POST', body: JSON.stringify(geoPayload())},
 )));
+
+// Publish functionality
+async function openPublishModal() {
+    try {
+        publishButton.disabled = true;
+        const response = await api('/api/git-status');
+        gitStatus.textContent = response.status || 'No changes';
+        commitMessage.value = '';
+        publishModal.hidden = false;
+        commitMessage.focus();
+    } catch (error) {
+        alert('Failed to fetch git status: ' + error.message);
+    } finally {
+        publishButton.disabled = false;
+    }
+}
+
+function closePublishModal() {
+    publishModal.hidden = true;
+}
+
+async function publishChanges() {
+    const message = commitMessage.value.trim();
+    if (!message) {
+        alert('Please enter a commit message');
+        return;
+    }
+
+    try {
+        confirmPublish.disabled = true;
+        const response = await api('/api/git-commit-push', {
+            method: 'POST',
+            body: JSON.stringify({message}),
+        });
+        setMessage(response.message || 'Changes published!');
+        closePublishModal();
+    } catch (error) {
+        alert('Failed to publish: ' + error.message);
+    } finally {
+        confirmPublish.disabled = false;
+    }
+}
+
+publishButton.addEventListener('click', openPublishModal);
+closePublish.addEventListener('click', closePublishModal);
+cancelPublish.addEventListener('click', closePublishModal);
+confirmPublish.addEventListener('click', publishChanges);
+
+publishModal.addEventListener('click', event => {
+    if (event.target === publishModal) closePublishModal();
+});
 
 Promise.all([initMap(), loadPosts()]).catch(error => {
     document.body.textContent = error.message;

@@ -1,6 +1,7 @@
 import json
 import mimetypes
 import os
+import subprocess
 import uuid
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -16,7 +17,7 @@ ROOT = Path(__file__).resolve().parent
 PROJECT_ROOT = ROOT.parent  # Parent directory for serving public files
 INSTA_FILE = ROOT / "insta.json"
 TOKEN_FILE = ROOT / "mapbox_token.json"
-HOST = "127.0.0.1"
+HOST = "0.0.0.0"
 PORT = int(os.environ.get("PHOTOS_ADMIN_PORT", "8765"))
 SEARCHBOX_SUGGEST_URL = "https://api.mapbox.com/search/searchbox/v1/suggest"
 SEARCHBOX_RETRIEVE_URL = "https://api.mapbox.com/search/searchbox/v1/retrieve"
@@ -33,6 +34,51 @@ def save_insta(items):
     with INSTA_FILE.open("w") as file:
         json.dump(items, file, indent=4)
         file.write("\n")
+
+
+def get_git_status():
+    try:
+        result = subprocess.run(
+            ['git', 'status', '--porcelain'],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode != 0:
+            return f"Error: {result.stderr}"
+        if not result.stdout.strip():
+            return "No changes"
+        return result.stdout
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
+def git_commit_and_push(message):
+    try:
+        subprocess.run(
+            ['git', 'add', '-A'],
+            cwd=PROJECT_ROOT,
+            check=True,
+            timeout=10,
+        )
+        subprocess.run(
+            ['git', 'commit', '-m', message],
+            cwd=PROJECT_ROOT,
+            check=True,
+            timeout=10,
+        )
+        subprocess.run(
+            ['git', 'push'],
+            cwd=PROJECT_ROOT,
+            check=True,
+            timeout=30,
+        )
+        return "Changes published successfully!"
+    except subprocess.CalledProcessError as e:
+        return f"Error: {str(e)}"
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 
 def first_caption_line(item):
@@ -356,6 +402,18 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
         parsed = urlparse(self.path)
         path = parsed.path
+
+        # Redirect /admin to /admin/ to fix relative paths
+        if path == "/admin":
+            self.send_response(301)
+            self.send_header("Location", "/admin/")
+            self.end_headers()
+            return
+
+        if path == "/api/git-status":
+            status = get_git_status()
+            return self.send_json(200, {"status": status})
+
         if path == "/api/config":
             token = token_value()
             return self.send_json(200, {"mapboxToken": token})
@@ -417,6 +475,17 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json(200, {"status": "success", "newPosts": new_count})
             except Exception as exc:
                 return self.send_json(500, {"error": f"Sync failed: {str(exc)}"})
+
+        if path == "/api/git-commit-push":
+            try:
+                payload = self.read_json()
+                message = payload.get("message", "").strip()
+                if not message:
+                    return self.send_json(400, {"error": "Commit message is required"})
+                result = git_commit_and_push(message)
+                return self.send_json(200, {"message": result})
+            except Exception as exc:
+                return self.send_json(500, {"error": f"Publish failed: {str(exc)}"})
 
         if not path.startswith("/api/posts/"):
             return self.send_json(404, {"error": "Not found"})

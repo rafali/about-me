@@ -47,7 +47,8 @@ body {
 }
 
 .btn-sync,
-.btn-preview {
+.btn-preview,
+.btn-publish {
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
@@ -60,7 +61,8 @@ body {
 }
 
 .btn-sync:hover,
-.btn-preview:hover {
+.btn-preview:hover,
+.btn-publish:hover {
     background: #2f5e44;
 }
 
@@ -463,6 +465,142 @@ button:disabled {
     color: #48604a;
 }
 
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid #d8dcd2;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7565;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #1f2933;
+}
+
+.modal-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.git-status {
+    background: #f9faf7;
+    border: 1px solid #d8dcd2;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-family: monospace;
+    font-size: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.commit-form {
+    margin-bottom: 16px;
+}
+
+.commit-form label {
+    display: grid;
+    gap: 6px;
+    color: #53604d;
+    font-weight: 700;
+}
+
+.commit-form textarea {
+    padding: 10px 12px;
+    border: 1px solid #c7cdbf;
+    border-radius: 6px;
+    background: white;
+    color: #1f2933;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px;
+    border-top: 1px solid #d8dcd2;
+}
+
+.btn-cancel,
+.btn-confirm {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #2f5e44;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-confirm {
+    background: #386b4e;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #2f5e44;
+}
+
+.btn-cancel {
+    background: white;
+    color: #1f2933;
+    border-color: #c7cdbf;
+}
+
+.btn-cancel:hover {
+    background: #f9faf7;
+}
+
 @media (max-width: 920px) {
     .workspace {
         grid-template-columns: 1fr;
@@ -490,7 +628,7 @@ button:disabled {
 }
 
 @media (max-width: 760px) {
-    .app {
+    #app {
         grid-template-columns: 1fr;
     }
 
@@ -510,5 +648,210 @@ button:disabled {
 
     .geo-grid label:first-child {
         grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Toolbar for mobile */
+    .toolbar-content {
+        flex-direction: column;
+        height: auto;
+        padding: 12px;
+        gap: 12px;
+    }
+
+    .toolbar h1 {
+        font-size: 18px;
+        width: 100%;
+    }
+
+    .toolbar-actions {
+        width: 100%;
+        gap: 8px;
+    }
+
+    .btn-sync,
+    .btn-preview {
+        flex: 1;
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+
+    /* Detail section */
+    .detail {
+        padding: 12px;
+    }
+
+    .editor-header {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .editor-header h2 {
+        font-size: 18px;
+    }
+
+    .editor-header a {
+        align-self: start;
+        padding: 8px 12px;
+        background: #386b4e;
+        color: white;
+        border-radius: 4px;
+    }
+
+    /* Sidebar styling for mobile */
+    .sidebar-header {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .sidebar-header select {
+        max-width: none;
+        flex: 1;
+    }
+
+    /* Post list items */
+    .post {
+        grid-template-columns: 60px 1fr;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .post img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .post-title {
+        font-size: 14px;
+    }
+
+    /* Caption editor */
+    .caption-editor {
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+
+    .caption-editor textarea {
+        font-size: 16px;
+        min-height: 80px;
+    }
+
+    .caption-editor button {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    /* Workspace */
+    .workspace {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .geo-editor,
+    .preview {
+        grid-template-columns: 1fr;
+    }
+
+    /* Geo editor grid */
+    .geo-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .geo-grid label {
+        width: 100%;
+    }
+
+    .geo-grid label:first-child {
+        grid-column: 1;
+    }
+
+    /* Coordinate paste */
+    .coord-paste {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        gap: 8px;
+    }
+
+    .coord-paste button {
+        padding: 12px;
+        font-size: 14px;
+    }
+
+    /* Map and preview */
+    .map {
+        max-width: 100%;
+        aspect-ratio: 1;
+    }
+
+    .map-preview {
+        max-width: 100%;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .map-preview img {
+        aspect-ratio: 1;
+    }
+
+    /* Geo results */
+    .geo-results {
+        max-width: none;
+        width: 100%;
+    }
+
+    .geo-result {
+        padding: 12px;
+    }
+
+    /* Override fixed widths for mobile */
+    .coord-paste {
+        max-width: none;
+    }
+
+    .map {
+        max-width: none;
+        width: 100%;
+    }
+
+    .map-preview {
+        max-width: none;
+    }
+
+    /* Action buttons */
+    .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .actions button {
+        width: 100%;
+        padding: 14px 12px;
+        font-size: 14px;
+    }
+
+    /* Media gallery */
+    .media-preview-gallery {
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 6px;
+    }
+
+    /* Select and input */
+    select,
+    input {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    /* Empty state */
+    .empty-state {
+        min-height: calc(100vh - 200px);
     }
 }
