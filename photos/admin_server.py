@@ -13,6 +13,7 @@ import sync
 
 
 ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = ROOT.parent  # Parent directory for serving public files
 INSTA_FILE = ROOT / "insta.json"
 TOKEN_FILE = ROOT / "mapbox_token.json"
 HOST = "127.0.0.1"
@@ -305,14 +306,34 @@ class Handler(SimpleHTTPRequestHandler):
     def translate_path(self, path):
         parsed = urlparse(path)
         requested = parsed.path
+
+        # Route to admin interface
+        if requested.startswith("/admin"):
+            if requested == "/admin":
+                requested = "/admin/"
+            if requested.endswith("/"):
+                requested += "index.html"
+            safe = Path(requested.lstrip("/"))
+            return str((ROOT / safe).resolve())
+
+        # Route to public site
         if requested == "/":
-            requested = "/admin/"
-        if requested == "/admin":
-            requested = "/admin/"
-        if requested.endswith("/"):
+            requested = "/index.html"
+        elif requested.endswith("/") and not requested.startswith("/api"):
             requested += "index.html"
+
         safe = Path(requested.lstrip("/"))
-        return str((ROOT / safe).resolve())
+        public_path = PROJECT_ROOT / safe
+        resolved = public_path.resolve()
+
+        # Ensure path is within PROJECT_ROOT for security
+        try:
+            resolved.relative_to(PROJECT_ROOT)
+        except ValueError:
+            # Path is outside PROJECT_ROOT, serve from ROOT
+            resolved = (ROOT / safe).resolve()
+
+        return str(resolved)
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
@@ -470,7 +491,10 @@ class Handler(SimpleHTTPRequestHandler):
 def main():
     mimetypes.add_type("application/javascript", ".js")
     server = ThreadingHTTPServer((HOST, PORT), Handler)
-    print(f"Photos admin: http://{HOST}:{PORT}/admin/")
+    print(f"🌍 Server started on port {PORT}")
+    print(f"📱 Preview site:     http://{HOST}:{PORT}/")
+    print(f"📸 Photos:           http://{HOST}:{PORT}/photos/")
+    print(f"⚙️  Admin interface:  http://{HOST}:{PORT}/admin/")
     server.serve_forever()
 
 
