@@ -56,6 +56,10 @@ const commitMessage = document.getElementById('commitMessage');
 const closePublish = document.getElementById('closePublish');
 const cancelPublish = document.getElementById('cancelPublish');
 const confirmPublish = document.getElementById('confirmPublish');
+const syncResultModal = document.getElementById('syncResultModal');
+const syncResultContent = document.getElementById('syncResultContent');
+const closeSyncResult = document.getElementById('closeSyncResult');
+const closeSyncResultBtn = document.getElementById('closeSyncResultBtn');
 const tokenModal = document.getElementById('tokenModal');
 const tokenError = document.getElementById('tokenError');
 const instaToken = document.getElementById('instaToken');
@@ -504,21 +508,54 @@ async function saveTokenAndRetry() {
     }
 }
 
-syncButton.addEventListener('click', () => {
-    action('Syncing Instagram', async () => {
+function showSyncResult(success, message, newPosts = 0) {
+    let content = '';
+    if (success) {
+        content = `
+            <div style="font-size: 18px; color: #2d4a35; margin-bottom: 16px;">✓ Sync successful!</div>
+            <div style="font-size: 32px; font-weight: 700; color: #386b4e; margin: 20px 0;">${newPosts}</div>
+            <div style="color: #687365;">new posts synchronized</div>
+        `;
+    } else {
+        content = `
+            <div style="font-size: 18px; color: #d32f2f; margin-bottom: 16px;">✗ Sync failed</div>
+            <div style="color: #687365; text-align: left; margin-top: 16px; padding: 12px; background: #ffebee; border-radius: 4px;">
+                ${message}
+            </div>
+        `;
+    }
+    syncResultContent.innerHTML = content;
+    syncResultModal.hidden = false;
+}
+
+function closeSyncResultModal() {
+    syncResultModal.hidden = true;
+}
+
+syncButton.addEventListener('click', async () => {
+    try {
+        setMessage('Syncing Instagram');
+        syncButton.disabled = true;
         const result = await api('/api/sync', {method: 'POST', body: '{}'});
         await loadPosts();
-        return result;
-    }).then(result => {
-        setMessage(`Synced ${result.newPosts} new posts`);
-    }).catch(error => {
+        showSyncResult(true, '', result.newPosts);
+    } catch (error) {
         if (error.message.includes('token') || error.message.includes('Token') || error.message.includes('401')) {
             pendingSyncAfterToken = true;
             openTokenModal(error.message);
         } else {
-            throw error;
+            showSyncResult(false, error.message);
         }
-    });
+    } finally {
+        syncButton.disabled = false;
+    }
+});
+
+closeSyncResult.addEventListener('click', closeSyncResultModal);
+closeSyncResultBtn.addEventListener('click', closeSyncResultModal);
+
+syncResultModal.addEventListener('click', event => {
+    if (event.target === syncResultModal) closeSyncResultModal();
 });
 
 closeToken.addEventListener('click', closeTokenModal);
