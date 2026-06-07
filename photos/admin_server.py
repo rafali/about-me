@@ -9,6 +9,7 @@ from urllib.parse import parse_qs, quote, urlparse
 
 import generate_maps
 import requests
+import sync
 
 
 ROOT = Path(__file__).resolve().parent
@@ -388,6 +389,14 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = urlparse(self.path).path
+
+        if path == "/api/sync":
+            try:
+                new_count = sync.sync_instagram()
+                return self.send_json(200, {"status": "success", "newPosts": new_count})
+            except Exception as exc:
+                return self.send_json(500, {"error": f"Sync failed: {str(exc)}"})
+
         if not path.startswith("/api/posts/"):
             return self.send_json(404, {"error": "Not found"})
 

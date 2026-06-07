@@ -15,6 +15,7 @@ const state = {
 
 const postList = document.getElementById('postList');
 const statusFilter = document.getElementById('statusFilter');
+const syncButton = document.getElementById('syncButton');
 const emptyState = document.getElementById('emptyState');
 const editor = document.getElementById('editor');
 const postTitle = document.getElementById('postTitle');
@@ -394,6 +395,17 @@ postList.addEventListener('click', event => {
 });
 
 statusFilter.addEventListener('change', loadPosts);
+
+syncButton.addEventListener('click', () => {
+    action('Syncing Instagram', async () => {
+        const result = await api('/api/sync', {method: 'POST', body: '{}'});
+        await loadPosts();
+        return result;
+    }).then(result => {
+        setMessage(`Synced ${result.newPosts} new posts`);
+    });
+});
+
 useCoordPaste.addEventListener('click', applyCoordinatesFromPaste);
 coordPaste.addEventListener('keydown', event => {
     if (event.key === 'Enter') {

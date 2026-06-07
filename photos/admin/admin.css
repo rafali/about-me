@@ -332,6 +332,11 @@ button:disabled {
     opacity: 0.6;
 }
 
+.sync-button {
+    width: 100%;
+    max-width: none;
+}
+
 .message {
     min-height: 20px;
     color: #48604a;
