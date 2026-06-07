@@ -649,14 +649,23 @@ button:disabled {
         min-height: auto;
         border-right: 0;
         border-bottom: 1px solid #d8dcd2;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-header {
+        flex-shrink: 0;
     }
 
     .post-list {
-        max-height: 60vh;
+        flex: 1;
+        max-height: none;
     }
 
     .sidebar.has-selection .post-list {
         max-height: 30vh;
+        flex: 0;
     }
 
     .geo-grid {
