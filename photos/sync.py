@@ -109,6 +109,7 @@ def sync_instagram():
 
     with open(INSTA_FILE, 'w') as file:
         json.dump(results, file, indent=4)
+        file.write("\n")
 
     return new_count
 
