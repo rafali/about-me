@@ -52,7 +52,12 @@ async function api(path, options = {}) {
 
 function assetUrl(path) {
     if (!path) return '';
-    return `/${path.replace(/^\/+/, '')}`;
+    const cleanPath = path.replace(/^\/+/, '');
+    // If path starts with 'images/', 'maps/', or 'admin/', prepend /photos/
+    if (cleanPath.match(/^(images|maps|admin)\//)) {
+        return `/photos/${cleanPath}`;
+    }
+    return `/${cleanPath}`;
 }
 
 function setMessage(text) {
