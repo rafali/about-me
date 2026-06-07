@@ -23,6 +23,7 @@ const postMeta = document.getElementById('postMeta');
 const postLink = document.getElementById('postLink');
 const postCaption = document.getElementById('postCaption');
 const saveCaption = document.getElementById('saveCaption');
+const previewButton = document.getElementById('previewButton');
 const mediaMain = document.getElementById('mediaMain');
 const mediaPreview = document.getElementById('mediaPreview');
 const mapPreview = document.getElementById('mapPreview');
@@ -435,6 +436,10 @@ syncButton.addEventListener('click', () => {
     }).then(result => {
         setMessage(`Synced ${result.newPosts} new posts`);
     });
+});
+
+previewButton.addEventListener('click', () => {
+    window.open('/photos/', '_blank');
 });
 
 saveCaption.addEventListener('click', () => action('Saving caption', () => api(

@@ -8,11 +8,19 @@
     <link rel="stylesheet" href="admin.css">
 </head>
 <body>
+    <header class="toolbar">
+        <div class="toolbar-content">
+            <h1>Photos Admin</h1>
+            <div class="toolbar-actions">
+                <button id="syncButton" type="button" class="btn-sync">Sync Instagram</button>
+                <button id="previewButton" type="button" class="btn-preview">Preview Site</button>
+            </div>
+        </div>
+    </header>
+
     <main id="app" class="app">
         <aside class="sidebar">
             <header class="sidebar-header">
-                <h1>Photos</h1>
-                <button id="syncButton" type="button" class="sync-button">Sync Instagram</button>
                 <select id="statusFilter" aria-label="Filter posts">
                     <option value="all">All</option>
                     <option value="missing-geo">Missing geo</option>
