@@ -487,6 +487,21 @@ class Handler(SimpleHTTPRequestHandler):
             except Exception as exc:
                 return self.send_json(500, {"error": f"Publish failed: {str(exc)}"})
 
+        if path == "/api/save-insta-token":
+            try:
+                payload = self.read_json()
+                token = payload.get("token", "").strip()
+                if not token:
+                    return self.send_json(400, {"error": "Token is required"})
+
+                insta_file = ROOT / "insta_token.json"
+                with insta_file.open("w") as file:
+                    json.dump({"token": token}, file, indent=2)
+
+                return self.send_json(200, {"message": "Token saved successfully"})
+            except Exception as exc:
+                return self.send_json(500, {"error": f"Failed to save token: {str(exc)}"})
+
         if not path.startswith("/api/posts/"):
             return self.send_json(404, {"error": "Not found"})
 

@@ -120,6 +120,29 @@
         </div>
     </div>
 
+    <div id="tokenModal" class="modal" hidden>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Instagram Token Required</h2>
+                <button type="button" class="modal-close" id="closeToken">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="tokenError" style="color: #d32f2f; margin-bottom: 16px;"></p>
+                <label>
+                    <span>Instagram Graph API Token</span>
+                    <textarea id="instaToken" placeholder="Paste your Instagram token here..." rows="4" style="font-family: monospace; font-size: 12px;"></textarea>
+                </label>
+                <p style="color: #687365; font-size: 12px; margin-top: 12px;">
+                    Get your token from <a href="https://developers.facebook.com/" target="_blank" style="color: #245a92;">Facebook Developers</a>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="cancelToken" class="btn-cancel">Cancel</button>
+                <button type="button" id="confirmToken" class="btn-confirm">Save & Retry</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.10.0/mapbox-gl.js"></script>
     <script src="admin.js"></script>
 </body>

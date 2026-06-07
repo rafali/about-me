@@ -56,6 +56,12 @@ const commitMessage = document.getElementById('commitMessage');
 const closePublish = document.getElementById('closePublish');
 const cancelPublish = document.getElementById('cancelPublish');
 const confirmPublish = document.getElementById('confirmPublish');
+const tokenModal = document.getElementById('tokenModal');
+const tokenError = document.getElementById('tokenError');
+const instaToken = document.getElementById('instaToken');
+const closeToken = document.getElementById('closeToken');
+const cancelToken = document.getElementById('cancelToken');
+const confirmToken = document.getElementById('confirmToken');
 const mediaMain = document.getElementById('mediaMain');
 const mediaPreview = document.getElementById('mediaPreview');
 const mapPreview = document.getElementById('mapPreview');
@@ -72,6 +78,7 @@ const saveAndGenerate = document.getElementById('saveAndGenerate');
 const message = document.getElementById('message');
 let geoSearchTimer = null;
 let geoSearchController = null;
+let pendingSyncAfterToken = false;
 
 async function api(path, options = {}) {
     const response = await fetch(path, {
@@ -460,6 +467,43 @@ postList.addEventListener('click', event => {
 
 statusFilter.addEventListener('change', loadPosts);
 
+function openTokenModal(error) {
+    tokenError.textContent = error || 'Instagram token is invalid or expired';
+    instaToken.value = '';
+    tokenModal.hidden = false;
+    instaToken.focus();
+}
+
+function closeTokenModal() {
+    tokenModal.hidden = true;
+}
+
+async function saveTokenAndRetry() {
+    const token = instaToken.value.trim();
+    if (!token) {
+        alert('Please enter a token');
+        return;
+    }
+
+    try {
+        confirmToken.disabled = true;
+        await api('/api/save-insta-token', {
+            method: 'POST',
+            body: JSON.stringify({token}),
+        });
+        closeTokenModal();
+
+        if (pendingSyncAfterToken) {
+            pendingSyncAfterToken = false;
+            syncButton.click();
+        }
+    } catch (error) {
+        alert('Failed to save token: ' + error.message);
+    } finally {
+        confirmToken.disabled = false;
+    }
+}
+
 syncButton.addEventListener('click', () => {
     action('Syncing Instagram', async () => {
         const result = await api('/api/sync', {method: 'POST', body: '{}'});
@@ -467,7 +511,22 @@ syncButton.addEventListener('click', () => {
         return result;
     }).then(result => {
         setMessage(`Synced ${result.newPosts} new posts`);
+    }).catch(error => {
+        if (error.message.includes('token') || error.message.includes('Token') || error.message.includes('401')) {
+            pendingSyncAfterToken = true;
+            openTokenModal(error.message);
+        } else {
+            throw error;
+        }
     });
+});
+
+closeToken.addEventListener('click', closeTokenModal);
+cancelToken.addEventListener('click', closeTokenModal);
+confirmToken.addEventListener('click', saveTokenAndRetry);
+
+tokenModal.addEventListener('click', event => {
+    if (event.target === tokenModal) closeTokenModal();
 });
 
 previewButton.addEventListener('click', () => {
