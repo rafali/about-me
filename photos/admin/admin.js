@@ -21,6 +21,8 @@ const editor = document.getElementById('editor');
 const postTitle = document.getElementById('postTitle');
 const postMeta = document.getElementById('postMeta');
 const postLink = document.getElementById('postLink');
+const postCaption = document.getElementById('postCaption');
+const saveCaption = document.getElementById('saveCaption');
 const mediaMain = document.getElementById('mediaMain');
 const mediaPreview = document.getElementById('mediaPreview');
 const mapPreview = document.getElementById('mapPreview');
@@ -316,6 +318,7 @@ async function selectPost(id) {
     postTitle.textContent = firstCaptionLine(payload.post);
     postMeta.textContent = payload.post.timestamp || '';
     postLink.href = payload.post.permalink || '#';
+    postCaption.value = payload.post.caption || '';
     renderMedia(payload.post);
     renderMapPreviews(payload.post);
     fillGeo(payload.post);
@@ -433,6 +436,11 @@ syncButton.addEventListener('click', () => {
         setMessage(`Synced ${result.newPosts} new posts`);
     });
 });
+
+saveCaption.addEventListener('click', () => action('Saving caption', () => api(
+    `/api/posts/${state.selectedId}/caption`,
+    {method: 'POST', body: JSON.stringify({caption: postCaption.value})},
+)));
 
 useCoordPaste.addEventListener('click', applyCoordinatesFromPaste);
 coordPaste.addEventListener('keydown', event => {

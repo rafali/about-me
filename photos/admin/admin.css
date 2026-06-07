@@ -366,6 +366,40 @@ button:disabled {
     max-width: none;
 }
 
+.caption-editor {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #f9faf7;
+    border-radius: 8px;
+    border: 1px solid #d8dcd2;
+}
+
+.caption-editor label {
+    display: grid;
+    gap: 6px;
+    color: #53604d;
+    font-weight: 700;
+}
+
+.caption-editor textarea {
+    padding: 10px 12px;
+    border: 1px solid #c7cdbf;
+    border-radius: 6px;
+    background: white;
+    color: #1f2933;
+    font-family: inherit;
+    font-size: 14px;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.caption-editor button {
+    align-self: start;
+    margin-top: 4px;
+}
+
 .message {
     min-height: 20px;
     color: #48604a;

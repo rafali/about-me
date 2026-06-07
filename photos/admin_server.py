@@ -482,6 +482,13 @@ class Handler(SimpleHTTPRequestHandler):
                 save_insta(items)
                 return self.send_json(200, {"post": item, "location_url": location_url})
 
+            if action == "caption":
+                payload = self.read_json()
+                caption = payload.get("caption", "")
+                item["caption"] = caption
+                save_insta(items)
+                return self.send_json(200, {"post": item})
+
         except (KeyError, TypeError, ValueError) as exc:
             return self.send_json(400, {"error": str(exc)})
 
