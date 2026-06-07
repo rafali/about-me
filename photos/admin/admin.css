@@ -652,6 +652,10 @@ button:disabled {
     }
 
     .post-list {
+        max-height: 60vh;
+    }
+
+    .sidebar.has-selection .post-list {
         max-height: 30vh;
     }
 

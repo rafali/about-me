@@ -158,6 +158,14 @@ function renderPosts() {
             </span>
         </button>
     `).join('');
+
+    // Update sidebar class based on selection
+    const sidebar = document.querySelector('.sidebar');
+    if (state.selectedId) {
+        sidebar.classList.add('has-selection');
+    } else {
+        sidebar.classList.remove('has-selection');
+    }
 }
 
 async function loadPosts() {
@@ -355,6 +363,7 @@ function setEditorVisible(visible) {
 
 async function selectPost(id) {
     state.selectedId = id;
+    document.querySelector('.sidebar').classList.add('has-selection');
     renderPosts();
     const payload = await api(`/api/posts/${id}`);
     state.selectedPost = payload.post;
