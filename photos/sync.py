@@ -45,6 +45,12 @@ def sync_instagram():
                     new_count += 1
                 else:
                     print(f"already stored: {item.get('caption')}")
+                    # Save and return when we hit a known post
+                    for old_item in insta:
+                        if old_item not in results:
+                            results.append(old_item)
+                    with open(INSTA_FILE, 'w') as file:
+                        json.dump(results, file, indent=4)
                     return new_count
 
             paging = j.get('paging', {})
