@@ -21,6 +21,7 @@ const editor = document.getElementById('editor');
 const postTitle = document.getElementById('postTitle');
 const postMeta = document.getElementById('postMeta');
 const postLink = document.getElementById('postLink');
+const mediaMain = document.getElementById('mediaMain');
 const mediaPreview = document.getElementById('mediaPreview');
 const mapPreview = document.getElementById('mapPreview');
 const geoName = document.getElementById('geoName');
@@ -164,9 +165,31 @@ function renderMapPreviews(post) {
 }
 
 function renderMedia(post) {
-    mediaPreview.innerHTML = mediaSources(post).map(src => (
-        `<img src="${assetUrl(src)}" alt="">`
+    const sources = mediaSources(post);
+    if (sources.length === 0) {
+        mediaMain.hidden = true;
+        mediaPreview.innerHTML = '';
+        return;
+    }
+
+    // Show main preview
+    mediaMain.hidden = false;
+    mediaMain.src = assetUrl(sources[0]);
+
+    // Show gallery
+    mediaPreview.innerHTML = sources.map((src, index) => (
+        `<img src="${assetUrl(src)}" alt="" class="${index === 0 ? 'active' : ''}" data-index="${index}">`
     )).join('');
+
+    // Add click handlers to gallery
+    mediaPreview.querySelectorAll('img').forEach(img => {
+        img.addEventListener('click', () => {
+            const index = parseInt(img.dataset.index);
+            mediaMain.src = assetUrl(sources[index]);
+            mediaPreview.querySelectorAll('img').forEach(i => i.classList.remove('active'));
+            img.classList.add('active');
+        });
+    });
 }
 
 function clearGeoResults() {

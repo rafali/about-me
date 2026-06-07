@@ -193,17 +193,46 @@ input {
 }
 
 .media-preview {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.media-preview img,
-.media-preview video {
+.media-preview-main {
     width: 100%;
     aspect-ratio: 1;
     object-fit: cover;
     display: block;
+    border: 1px solid #d8dcd2;
+    border-radius: 8px;
+    background: #e3e7df;
+}
+
+.media-preview-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    gap: 8px;
+}
+
+.media-preview-gallery img,
+.media-preview-gallery video {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.media-preview-gallery img:hover,
+.media-preview-gallery video:hover {
+    border-color: #386b4e;
+}
+
+.media-preview-gallery img.active {
+    border-color: #386b4e;
 }
 
 .map-preview img {

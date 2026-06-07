@@ -5,6 +5,20 @@
         "media_type": "CAROUSEL_ALBUM",
         "media_url": "images/img_18100307240285227.jpg",
         "permalink": "https://www.instagram.com/p/DY9QRiuiFkl/",
+        "geo": {
+            "name": "Stade Roland Garros, France",
+            "lat": 48.84563,
+            "lon": 2.25016,
+            "region_zoom": 9.0,
+            "region_center": {
+                "lat": 48.863707,
+                "lon": 2.346318
+            }
+        },
+        "location_url": [
+            "maps/stade-roland-garros-france-context.webp",
+            "maps/stade-roland-garros-france-region.webp"
+        ],
         "timestamp": "2026-05-30T09:04:02+0000",
         "children": {
             "data": [
@@ -68,6 +82,20 @@
         "media_type": "CAROUSEL_ALBUM",
         "media_url": "images/img_17893024914467131.jpg",
         "permalink": "https://www.instagram.com/p/DYKXHm9jHM-/",
+        "geo": {
+            "name": "Prague Czech Republic, 110 00 Prague, Tch\u00e9quie",
+            "lat": 50.091207,
+            "lon": 14.420976,
+            "region_zoom": 8.0,
+            "region_center": {
+                "lat": 50.091207,
+                "lon": 14.420976
+            }
+        },
+        "location_url": [
+            "maps/prague-czech-republic-110-00-prague-tchequie-context.webp",
+            "maps/prague-czech-republic-110-00-prague-tchequie-region.webp"
+        ],
         "timestamp": "2026-05-10T14:42:34+0000",
         "children": {
             "data": [
