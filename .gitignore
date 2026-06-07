@@ -1,4 +1,5 @@
 .DS_Store
 .env
 .env.*
+photos/insta_token.json
 photos/mapbox_token.json
